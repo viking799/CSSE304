@@ -1,0 +1,45 @@
+;Han Wei Assignment9
+
+;#1
+(define snlist-recur
+  (letrec ([helper (lambda (proc ls bs)
+                 (cond [(null? ls) bs]
+                       [(number? (car ls)) (proc (car ls) (helper (cdr ls)))]
+                       [else (proc (helper (car ls)) (helper (cdr ls)))]))])
+    helper))
+
+
+
+;#a
+(define sn-list-sum
+  (lambda (ls)
+    (helper + ls 0)))
+
+;#2
+(define sn-list-map
+  (lambda (proc ls)
+    (cond [(null? ls) ls]
+          [(number? (car ls)) (cons  (proc (car ls)) (sn-list-map proc (cdr ls)))]
+          [else (cons (sn-list-sum (car ls)) (sn-list-sum (cdr ls)))])))
+
+;#3
+
+
+
+;#2
+;worked with Linjie Zha, we came up with the idea about adding a boolean in front of the slist. 
+(define subst-leftmost
+  (letrec ([helper
+             (lambda (new old slist eq-f)
+               (cond [(null? slist) (cons #f '())]
+                     [(symbol? (car slist)) (if (eq-f (car slist) old)
+                                                (cons #t (cons new (cdr slist)))
+                                                (let([next (helper new old (cdr slist) eq-f)])
+                                                  (cons (car next) (cons (car slist) (cdr next)))))]
+                     [else (let ([next (helper new old (car slist) eq-f)])
+                        (if (car next)
+                            (cons #t (cons (cdr next) (cdr slist)))
+                            (let([next+ (helper new old (cdr slist) eq-f)])
+                                                  (cons (car next+) (cons (cdr next) (cdr next+))))))]))])
+  (lambda (new old slist eq-f)
+    (cdr (helper new old slist eq-f)))))

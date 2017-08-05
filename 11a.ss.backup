@@ -1,0 +1,15 @@
+;Han Wei Assignment10
+
+;#1
+(define-syntax my-let
+  (syntax-rules ()
+    [(_ e1 e2 e3)
+     (define e1
+       (lambda e2
+         e3))]))
+  
+;#2
+;(define-syntax my-or
+;  (syntax-rules ()
+;    [(_ e1 e2 ...)
+;     (if (member )

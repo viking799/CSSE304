@@ -1,0 +1,88 @@
+;Han Wei Assignment6b
+
+;#7
+(define filter-in
+  (lambda (proc ls)
+    (if(null? ls)
+      '()
+      (if(proc (car ls))
+        (cons (car ls) (filter-in proc (cdr ls)))
+        (filter-in proc (cdr ls))))))
+
+;#8
+(define filter-out
+  (lambda (proc ls)
+    (if(null? ls)
+      '()
+      (if (not (proc (car ls)))
+        (cons (car ls) (filter-out proc (cdr ls)))
+        (filter-out proc (cdr ls))))))
+
+;#9
+(define sort-list-of-symbols
+  (lambda (los)
+    (map string->symbol (sort string<? (map symbol->string los)))))
+
+;#10
+(define invert1
+  (letrec([flip (lambda (ls)
+                  (if(null? ls)
+                   ls
+                   (list (cadr ls) (car ls) )))])
+  (lambda ls
+     (map flip ls ))))
+
+(define invert 
+  (lambda ls
+    (if(null? ls)
+      '()
+      (cons (list (cadr ls) (car ls)) (invert (cdr ls))))))
+
+
+
+
+;#1
+(define curry2
+  (lambda (prec)
+    (lambda (a)
+      (lambda (b)
+        (prec a b)))))
+
+;#2
+(define curried-compose
+  (lambda (pre1)
+    (lambda (pre2)
+      (lambda (ls)
+        (pre1 (pre2 ls))))))
+
+;#3
+(define compose
+  (lambda list-of-functions
+      (if(equal? (length list-of-functions) 1)
+        (car list-of-functions)
+        (lambda (n) 
+          ((car list-of-functions) ((apply compose (cdr list-of-functions)) n))))))
+    
+;#4
+(define make-list-c
+  (lambda (n)
+    (if(zero? n)
+      (lambda (ls)
+        '())
+      (lambda (ls)
+        (cons ls ((make-list-c (- n 1)) ls))))))
+
+;#5
+(define let->application
+  (lambda (ls)
+    (cons  (cons 'lambda (cons (map car (cadr ls)) (list (cadr (cdr ls))))) (map cadr (cadr ls)) )))
+
+;#6
+(define let*->let
+  (letrec ([add-let (lambda (ls n)
+                      (if(null? ls)
+                        n
+                        (list 'let (list (car ls)) (add-let (cdr ls) n) )))])
+    (lambda (ls)
+    (add-let (cadr ls) (caddr ls)))))
+

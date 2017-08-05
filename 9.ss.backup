@@ -1,0 +1,70 @@
+;Han Wei Assignment9
+
+;#1
+(define snlist-recur
+  (letrec ([helper (lambda (proc1 proc2 ls bs)
+                 (cond [(null? ls) bs]
+                       [(list? (car ls)) (proc2 (helper proc1 proc2 (car ls) bs) (helper proc1 proc2 (cdr ls) bs))]
+                       [else (proc1 (car ls) (helper proc1 proc2 (cdr ls) bs))]
+                   ))])
+    (lambda (proc1 proc2 ls bs) 
+      (helper proc1 proc2 ls bs))))
+
+
+
+;#a
+(define sn-list-sum
+  (lambda (ls)
+    (snlist-recur + + ls 0)))
+
+;#b
+(define sn-list-map
+  (lambda (proc ls)
+    (snlist-recur (lambda (a b) (cons (proc a) b)) cons ls '())))
+
+;#c
+(define sn-list-paren-count
+  (lambda (ls)
+    (snlist-recur (lambda (a b) b) + ls 2)))
+
+;#d
+(define sn-list-reverse
+  (lambda (ls)
+    (snlist-recur (lambda (a b) (append b (list a))) (lambda (a b) (append b (list a))) ls '())))
+
+;#e
+(define sn-list-occur
+  (lambda (s ls)
+    (snlist-recur (lambda (a b) (if (equal? a s) (add1 b) b)) + ls 0)))
+
+;#f
+(define sn-list-depth
+  (lambda (ls)
+    (snlist-recur (lambda (a b) b) (lambda (a b) (max (add1 a) b)) ls 1)))
+
+;#2
+(define bt-recur
+  (letrec ([helper (lambda (proc1 proc2 ls bs)
+                 (cond [(null? ls) bs]
+                       [(list? ls) (proc1 (car ls) (helper proc1 proc2 (cadr ls) bs) (helper proc1 proc2 (caddr ls) bs))]
+                       [else (proc2 ls)]
+                   ))])
+    (lambda (proc1 proc2 ls bs) 
+      (helper proc1 proc2 ls bs))))
+
+(define bt-sum
+  (lambda (ls)
+    (bt-recur (lambda (a b c) (+ b c)) (lambda (x) x) ls 0)))
+
+(define bt-inorder
+  (lambda (ls)
+    (bt-recur (lambda (a b c) (append b (cons a c))) (lambda (a) '()) ls '())))
+
+;#3
+(define make-c...r
+  (letrec ([make-cr (lambda (ls)
+                      (cond[(null? ls) (lambda (x) x)]
+                           [(equal? (car ls) '#\d) (cdr ((make-cr ls)))]
+                           [(equal? (car ls) '#\a) (car ((make-cr ls)))]))])
+  (lambda (ls)
+    (make-cr (string->list ls)))))

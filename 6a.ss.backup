@@ -1,0 +1,97 @@
+;Han Wei Assignment6
+
+;#1
+(define curry2
+  (lambda (prec)
+    (lambda (a)
+      (lambda (b)
+        (prec a b)))))
+
+;#2
+(define curried-compose
+  (lambda (pre1)
+    (lambda (pre2)
+      (lambda (ls)
+        (pre1 (pre2 ls))))))
+
+;#3
+(define compose
+  (lambda list-of-functions
+    (lambda (ls)
+      (if(equal? (length list-of-functions) 2)
+        (((curried-compose (car list-of-functions)) (cadr list-of-functions)) ls)
+        ( (car list-of-functions)        ((compose (cdr list-of-functions)) ls)          ))))) 
+
+(define aaa
+  (lambda list-of-functions
+    (lambda (ls)
+      (if(equal? (length list-of-functions) 2)
+        (((curried-compose (car list-of-functions)) (cadr list-of-functions)) ls)
+        (cdr list-of-functions)))))
+
+    
+    
+    
+;#1
+(define minimize-interval-list
+  (letrec ([min-f (lambda (n)
+                   (if(equal? (length n) 1)
+                     n
+                     (if(< (cadr (car n)) (car(cadr n)))
+                       (cons (car n) (min-f (cdr n)))
+                       (min-f (cons (list (car (car n)) (max (cadr (car n)) (cadr (cadr n)))) (cddr n))))
+                     ))]
+           [sort-f (lambda (a b)
+                     (< (car a) (car b)))])
+    (lambda (n)
+      (min-f (list-sort sort-f n)))))
+
+;#2
+(define exists?
+  (lambda (pred ls)
+    (list? (member #t (map pred ls)))))
+
+;#3
+(define list-index
+  (letrec ([first-true (lambda (n)
+                         (if(car n)
+                           0
+                           (+ 1 (first-true (cdr n)))))])
+  (lambda (pred ls)
+    (if (exists? pred ls)
+        (first-true (map pred ls))
+        #f))))
+
+;#4
+(define pascal-triangle 
+  (letrec ([one-more (lambda (n)
+                      (cons (cons '1 (sum-set (car n))) n))]
+           [sum-set (lambda (n)
+                      (if(equal? (length n) 1)     
+                        n
+                        (cons (+ (car n) (cadr n)) (sum-set (cdr n)) )))])
+    (lambda (n)
+      (if(negative? n)
+        '()
+        (if(positive? n)
+          (one-more (pascal-triangle (- n 1)))
+          '((1)))))))
+
+;#5
+(define product
+  (lambda (l1 l2)
+    (if(null? l1)
+      '()
+      (append (map (lambda (n) (list (car l1) n )) l2) (product (cdr l1) l2)))))
+
+(define multi-set?
+  (lambda (obj)
+    (if(relation? obj)
+      (if(member #f (map format? obj))
+        #f
+        (set? (map car obj)))
+      #f)))
+
+(define format? 
+  (lambda (ls)
+    (and (symbol? (car ls)) (if(number? (cadr ls)) (positive? (cadr ls)) #f))))
